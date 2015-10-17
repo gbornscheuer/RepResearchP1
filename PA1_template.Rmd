@@ -80,6 +80,11 @@ Note: I still don't have an explanation of why the value given here for the medi
 xinter <- datos %>% group_by(interval) %>% summarise(pxi = mean(steps, na.rm=TRUE))
 xinterorder <- xinter[order(as.numeric(xinter$interval)),]
 plot(xinterorder$interval, xinterorder$pxi, type="l", xlab = "5 minutes Interval", ylab = "Average number of steps per day", main = "24 Hours Time Series Plot")
+```
+
+#### 2.1 Obtaining the 5 minute interval with the maximum number of steps, and also this number
+
+```{r}
 max(xinter$pxi)
 maxint <- xinter$interval[which(xinter$pxi == max(xinter$pxi))]
 maxint
@@ -99,6 +104,8 @@ The number of missing values in the measure variable steps is: `r na`. There are
 The filling strategy is replacement of the Na values with the corresponding mean of the same day of the week. It would have been nicer if I had used also the same interval.
 
 ```{r}
+## datos1 is the new dataset with no NAs
+##
 datos1 <- datos
 datos1$wdays <- weekdays(as.Date((datos1$date)))
 d2 <- datos1 %>% group_by(wdays, interval) %>% summarise(pasos = mean(steps, na.rm = TRUE))
@@ -119,9 +126,14 @@ mean(datosdaywo$stepsbydaywo, na.rm= TRUE)
 median(datosdaywo$stepsbydaywo, na.rm= TRUE)
 sum(datos1$steps)
 summary(datosdaywo)
+incsteps <- 100*(sum(datos1$steps) - sum(datos$steps, na.rm = TRUE))/sum(datos$steps, na.rm = TRUE)
+incstepsf <- format(incsteps, digits = 5, nsmall = 2)
+incstepsave <- (sum(datos1$steps) - sum(datos$steps, na.rm = TRUE))/sum(is.na(datos))
+incstepsavef <- format(incstepsave, digits = 5, nsmall = 2)
 ```
 Both, the mean and the median are higher now, after replacing the Na values. The total  
-steps are 15.7% higher, and the number of steps divided by the number of NA's is 38.8.
+steps are `r incstepsf` higher, and the number of steps divided by the number of NA's is 
+`r incstepsavef`
 
 ### Are there differences in activity patterns between weekdays and weekends?
 
@@ -138,7 +150,12 @@ xyplot(datosdia2ord$ave ~ as.integer(datosdia2ord$interval) | factor(wdays), dat
 ```
 
 The results obtained show that during the weekend the individual is more active phisically.  
-It sound normal if he or she is "whitre collar" during weekday and not sedentary during  
+It sound normal if he or she is "white collar" during weekday and not sedentary during  
 weekends.  
 
+Note: Extra comment.
 
+It seems quite interesting the information that can be obtained studying (analyzing) every  
+time there is a change to 0 steps and then it starts again. By example you can get to know
+how many hours of sleel and how many times awakes and ...whatever.
+You can get to know many things about someone, habits... that can be related with health.

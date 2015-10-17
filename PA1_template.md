@@ -137,6 +137,9 @@ plot(xinterorder$interval, xinterorder$pxi, type="l", xlab = "5 minutes Interval
 
 ![plot of chunk unnamed-chunk-4](./figure/unnamed-chunk-4-1.png) 
 
+#### 2.1 Obtaining the 5 minute interval with the maximum number of steps, and also this number
+
+
 ```r
 max(xinter$pxi)
 ```
@@ -180,6 +183,8 @@ The filling strategy is replacement of the Na values with the corresponding mean
 
 
 ```r
+## datos1 is the new dataset with no NAs
+##
 datos1 <- datos
 datos1$wdays <- weekdays(as.Date((datos1$date)))
 d2 <- datos1 %>% group_by(wdays, interval) %>% summarise(pasos = mean(steps, na.rm = TRUE))
@@ -193,7 +198,7 @@ datosdaywo <- datos1 %>% group_by(date) %>% summarise(stepsbydaywo = sum(steps, 
 hist(datosdaywo$stepsbydaywo, breaks = 10, xlab = "Number of Steps by Day", main = "Histogram of total steps by day (no NA's)")
 ```
 
-![plot of chunk unnamed-chunk-6](./figure/unnamed-chunk-6-1.png) 
+![plot of chunk unnamed-chunk-7](./figure/unnamed-chunk-7-1.png) 
 
 ### 4. Comparing the results of the data with NAs and without NAs
 
@@ -235,8 +240,16 @@ summary(datosdaywo)
 ##                     3rd Qu.:12811  
 ##                     Max.   :21194
 ```
+
+```r
+incsteps <- 100*(sum(datos1$steps) - sum(datos$steps, na.rm = TRUE))/sum(datos$steps, na.rm = TRUE)
+incstepsf <- format(incsteps, digits = 5, nsmall = 2)
+incstepsave <- (sum(datos1$steps) - sum(datos$steps, na.rm = TRUE))/sum(is.na(datos))
+incstepsavef <- format(incstepsave, digits = 5, nsmall = 2)
+```
 Both, the mean and the median are higher now, after replacing the Na values. The total  
-steps are 15.7% higher, and the number of steps divided by the number of NA's is 38.8.
+steps are 15.683 higher, and the number of steps divided by the number of NA's is 
+38.839
 
 ### Are there differences in activity patterns between weekdays and weekends?
 
@@ -253,10 +266,15 @@ datosdia2ord <- datosdia2[order(as.numeric(datosdia2$interval)),]
 xyplot(datosdia2ord$ave ~ as.integer(datosdia2ord$interval) | factor(wdays), data = datosdia2ord, type = "l", layout = c(1, 2), xlab = "5 minutes interval (from 00:00AM to 11:55PM)", ylab = "Average number of steps")
 ```
 
-![plot of chunk unnamed-chunk-8](./figure/unnamed-chunk-8-1.png) 
+![plot of chunk unnamed-chunk-9](./figure/unnamed-chunk-9-1.png) 
 
 The results obtained show that during the weekend the individual is more active phisically.  
-It sound normal if he or she is "whitre collar" during weekday and not sedentary during  
+It sound normal if he or she is "white collar" during weekday and not sedentary during  
 weekends.  
 
+Note: Extra comment.
 
+It seems quite interesting the information that can be obtained studying (analyzing) every  
+time there is a change to 0 steps and then it starts again. By example you can get to know
+how many hours of sleel and how many times awakes and ...whatever.
+You can get to know many things about someone, habits... that can be related with health.
