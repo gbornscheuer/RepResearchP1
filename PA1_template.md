@@ -1,7 +1,7 @@
 ---
 title: "Course: Reproducible Research - Peer Assessment 1"
 author: "gbp"
-date: '17 Octubre, 2015'
+date: '17 October, 2015'
 output: html_document
 ---
 ### Introduction
@@ -56,6 +56,7 @@ library(ggplot2)
 library(lattice)
 library(knitr)
 opts_chunk$set(fig.path = "./figure/")
+setwd("C:/Documents and Settings/guillermo/Escritorio/Coursera")
 datos <- read.csv("activity.csv", colClasses = c("numeric", "character", "character"))
 nrow(datos)
 ```
@@ -96,7 +97,12 @@ datosday <- datos %>% group_by(date) %>% summarise(stepsbyday = sum(steps, rm.na
 
 This is the histogram of the total number of steps taken each day:
 
-![plot of chunk unnamed-chunk-1](./figure/unnamed-chunk-1-1.png) 
+
+```r
+hist(datosday$stepsbyday, breaks = 10, xlab = "Number of Steps by Day", main = "Histogram of total steps by day")
+```
+
+![plot of chunk unnamed-chunk-2](./figure/unnamed-chunk-2-1.png) 
 
 
 ```r
@@ -122,10 +128,26 @@ The mean of the total number of steps is 10767.19 and the corresponding median i
 Note: I still don't have an explanation of why the value given here for the median is the real plus one. It's easy to verify it visually. The value returned by the function in the console is 10765 and here it is 10766. 
 
 ### 2. What is the average daily activity pattern?
-![plot of chunk 2. Time series plot](./figure/2. Time series plot-1.png) 
+
+```r
+xinter <- datos %>% group_by(interval) %>% summarise(pxi = mean(steps, na.rm=TRUE))
+xinterorder <- xinter[order(as.numeric(xinter$interval)),]
+plot(xinterorder$interval, xinterorder$pxi, type="l", xlab = "5 minutes Interval", ylab = "Average number of steps per day", main = "24 Hours Time Series Plot")
+```
+
+![plot of chunk unnamed-chunk-4](./figure/unnamed-chunk-4-1.png) 
+
+```r
+max(xinter$pxi)
+```
 
 ```
 ## [1] 206.1698
+```
+
+```r
+maxint <- xinter$interval[which(xinter$pxi == max(xinter$pxi))]
+maxint
 ```
 
 ```
@@ -171,7 +193,7 @@ datosdaywo <- datos1 %>% group_by(date) %>% summarise(stepsbydaywo = sum(steps, 
 hist(datosdaywo$stepsbydaywo, breaks = 10, xlab = "Number of Steps by Day", main = "Histogram of total steps by day (no NA's)")
 ```
 
-![plot of chunk Filling NAs values](./figure/Filling NAs values-1.png) 
+![plot of chunk unnamed-chunk-6](./figure/unnamed-chunk-6-1.png) 
 
 ### 4. Comparing the results of the data with NAs and without NAs
 
@@ -214,7 +236,7 @@ summary(datosdaywo)
 ##                     Max.   :21194
 ```
 Both, the mean and the median are higher now, after replacing the Na values. The total  
-steps are 15.7% higher, and the number of steps divided by the number of Na's is 38.8.
+steps are 15.7% higher, and the number of steps divided by the number of NA's is 38.8.
 
 ### Are there differences in activity patterns between weekdays and weekends?
 
@@ -231,4 +253,10 @@ datosdia2ord <- datosdia2[order(as.numeric(datosdia2$interval)),]
 xyplot(datosdia2ord$ave ~ as.integer(datosdia2ord$interval) | factor(wdays), data = datosdia2ord, type = "l", layout = c(1, 2), xlab = "5 minutes interval (from 00:00AM to 11:55PM)", ylab = "Average number of steps")
 ```
 
-![plot of chunk unnamed-chunk-2](./figure/unnamed-chunk-2-1.png) 
+![plot of chunk unnamed-chunk-8](./figure/unnamed-chunk-8-1.png) 
+
+The results obtained show that during the weekend the individual is more active phisically.  
+It sound normal if he or she is "whitre collar" during weekday and not sedentary during  
+weekends.  
+
+
